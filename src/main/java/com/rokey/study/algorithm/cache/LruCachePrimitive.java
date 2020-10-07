@@ -84,6 +84,10 @@ public class LruCachePrimitive {
 		}
 	}
 
+	public int size() {
+		return count;
+	}
+
 	static class Node {
 
 		private int key, value;
