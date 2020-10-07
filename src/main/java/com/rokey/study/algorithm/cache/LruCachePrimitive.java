@@ -10,93 +10,107 @@ import java.util.Map;
  * @author chenyuejun
  * @date 2020-10-07 10:50 下午
  **/
-public class LruCachePrimitive {
+public class LruCachePrimitive<K, V> {
 
 	private int capacity;
-	private int count;
-	private Map<Integer, Node> map;
-	private Node head,tail;
+	private Map<K, Node<K, V>> map;
+	private Node<K,V> head,tail;
 
 	public LruCachePrimitive(int cap) {
 
+		this.capacity = cap;
 		map = new HashMap<>();
-		head = new Node(0, 0);
-		tail = new Node(0, 0);
-		head.next = tail;
-		head.prev = null;
-		tail.prev = head;
-		tail.next = null;
-		capacity = cap;
 	}
 
-	// This method works in O(1)
-	public int get(int key) {
-		// your code here
+	public V get(K key) {
+		if (key == null) {
+			return null;
+		}
 		if (map.containsKey(key)) {
-			Node node = map.get(key);
+			Node<K, V> node = map.get(key);
 			deleteNode(node);
-			addNode2Head(node);
+			offerNode(node);
 			return node.value;
 		}
-		return -1;
+		return null;
 	}
 
-	private void deleteNode(Node node) {
+	private void deleteNode(Node<K, V> node) {
 
-		Node next =  node.next;
-		Node prev = node.prev;
-		prev.next = next;
-		next.prev = prev;
-	}
-
-	private void addNode2Head(Node node) {
-
-		Node temp = head.next;
-		head.next = node;
-		node.prev = head;
-		temp.prev = node;
-		node.next = temp;
-	}
-
-	// This method works in O(1)
-	public void set(int key, int value) {
-		// your code here
-		if (map.containsKey(key)) {
-			Node newNode = new Node(key, value);
-			Node originalNode = map.get(key);
-			map.put(key, newNode);
-			this.deleteNode(originalNode);
-			this.addNode2Head(newNode);
+		if (node == null) {
+			return;
+		}
+		if (node.prev != null) {
+			node.prev.next = node.next;
 		} else {
-			if (count < capacity) {
-				Node newNode = new Node(key, value);
-				map.put(key, newNode);
-				this.addNode2Head(newNode);
-				count++;
-			} else {
-				Node node2Delete = tail.prev;
-				map.remove(node2Delete.key);
-				deleteNode(node2Delete);
-				Node newNode = new Node(key, value);
-				map.put(key, newNode);
-				this.addNode2Head(newNode);
+			this.head = node.next;
+		}
+		if (node.next != null) {
+			node.next.prev = node.prev;
+		} else {
+			this.tail = node.prev;
+		}
+	}
+
+	/**
+	 * 新元素放入队列尾部
+	 * @param node
+	 */
+	private void offerNode(Node<K, V> node) {
+
+		if (node == null) {
+			return;
+		}
+		if (head == null) {
+			head = tail = node;
+		} else {
+			tail.next = node;
+			node.prev = tail;
+			node.next = null;
+			tail = node;
+		}
+	}
+
+	public void set(K key, V value) {
+
+		if (map.containsKey(key)) {
+
+			Node<K, V> originalNode = map.get(key);
+			this.deleteNode(originalNode);
+			Node<K, V> newNode = new Node(key, value);
+			map.put(key, newNode);
+			this.offerNode(newNode);
+		} else {
+			if (size() == capacity) {
+				// 数量达到上线，删除队列头
+				map.remove(head.key);
+				deleteNode(head);
 			}
+			Node<K, V> newNode = new Node(key, value);
+			map.put(key, newNode);
+			this.offerNode(newNode);
 		}
 	}
 
 	public int size() {
-		return count;
+		return this.map.size();
 	}
 
-	static class Node {
+	private static class Node<K,V> {
 
-		private int key, value;
-		private Node prev;
-		private Node next;
+		private K key;
+		private V value;
+		private Node<K, V> prev;
+		private Node<K, V> next;
 
-		public Node(int key, int value) {
+		public Node(K key, V value) {
 			this.key = key;
 			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return value.toString();
 		}
 	}
 }

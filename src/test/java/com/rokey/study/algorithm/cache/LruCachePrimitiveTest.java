@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author chenyuejun
@@ -11,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  **/
 public class LruCachePrimitiveTest {
 
-	private LruCachePrimitive cache;
+	private LruCachePrimitive<Integer, Integer> cache;
 
 	@Before
 	public void setup() {
@@ -23,8 +24,8 @@ public class LruCachePrimitiveTest {
 	public void testGetHappyCase() {
 
 		cache.set(1, 2);
-		assertEquals(2, cache.get(1));
-		assertEquals(-1, cache.get(2));
+		assertEquals(2, cache.get(1).intValue());
+		assertNull(cache.get(2));
 	}
 
 	@Test
@@ -33,8 +34,8 @@ public class LruCachePrimitiveTest {
 		cache.set(1, 2);
 		cache.set(3, 4);
 		cache.set(1, 10);
-		assertEquals(10, cache.get(1));
-		assertEquals(4, cache.get(3));
+		assertEquals(10, cache.get(1).intValue());
+		assertEquals(4, cache.get(3).intValue());
 	}
 
 	@Test
@@ -44,11 +45,11 @@ public class LruCachePrimitiveTest {
 		cache.set(3, 4);
 		cache.set(5, 6);
 		cache.set(7, 8);
-		assertEquals(-1, cache.get(1));
-		assertEquals(4, cache.get(3));
+		assertNull(cache.get(1));
+		assertEquals(4, cache.get(3).intValue());
 		cache.set(9, 10);
-		assertEquals(10, cache.get(9));
-		assertEquals(-1, cache.get(5));
+		assertEquals(10, cache.get(9).intValue());
+		assertNull(cache.get(5));
 	}
 
 	@Test
@@ -56,10 +57,10 @@ public class LruCachePrimitiveTest {
 
 		cache.set(1, 2);
 		assertEquals(1, cache.size());
-		assertEquals(2, cache.get(1));
+		assertEquals(2, cache.get(1).intValue());
 		cache.set(1, 3);
 		assertEquals(1, cache.size());
-		assertEquals(3, cache.get(1));
+		assertEquals(3, cache.get(1).intValue());
 		cache.set(3,4);
 		cache.set(5,6);
 		cache.set(7,8);
