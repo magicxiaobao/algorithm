@@ -44,4 +44,21 @@ public class BubbleSortTest {
 		BubbleSort.sortJava8(twoEleArray);
 		log.info("after bubbleSort, result: {}", JSONUtil.toJsonStr(twoEleArray));
 	}
+
+	@Test
+	public void optimizedBubbleSort() {
+
+		int[] array = {4, 5, 2, 9, 8, 1, 10, 6};
+		BubbleSort.optimizedBubbleSort(array);
+		log.info("after bubbleSort, result: {}", JSONUtil.toJsonStr(array));
+		int[] emptyArray = {};
+		BubbleSort.optimizedBubbleSort(emptyArray);
+		log.info("after bubbleSort, result: {}", JSONUtil.toJsonStr(emptyArray));
+		int[] oneEleArray = {2};
+		BubbleSort.optimizedBubbleSort(oneEleArray);
+		log.info("after bubbleSort, result: {}", JSONUtil.toJsonStr(oneEleArray));
+		int[] twoEleArray = {4, 2};
+		BubbleSort.optimizedBubbleSort(twoEleArray);
+		log.info("after bubbleSort, result: {}", JSONUtil.toJsonStr(twoEleArray));
+	}
 }
